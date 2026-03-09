@@ -1,0 +1,28 @@
+---
+- name: Configuración básica de clientes Linux
+  hosts: linux_clients
+  become: true
+  gather_facts: true
+
+  vars:
+    linux_packages:
+      - htop
+      - curl
+      - git
+
+  tasks:
+    - name: Actualizar índice de paquetes
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == "Debian"
+
+    - name: Instalar paquetes básicos en Linux
+      ansible.builtin.apt:
+        name: "{{ linux_packages }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Asegurar que el hostname coincide con el de inventario
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+

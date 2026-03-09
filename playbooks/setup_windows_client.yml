@@ -1,0 +1,32 @@
+---
+- name: Configuración básica de clientes Windows
+  hosts: windows_clients
+  gather_facts: false
+
+  vars:
+    win_packages:
+      - 7zip.7zip
+
+  tasks:
+    - name: Asegurar que WinRM está configurado (modo básico de ejemplo)
+      ansible.windows.win_shell: |
+        winrm quickconfig -q
+
+    - name: Cambiar el nombre del equipo para que coincida con el inventario
+      ansible.windows.win_hostname:
+        name: "{{ inventory_hostname | upper }}"
+      register: hostname_result
+
+    - name: Reiniciar si el cambio de nombre lo requiere
+      ansible.windows.win_reboot:
+        msg: "Reinicio requerido tras cambio de hostname"
+        pre_reboot_delay: 5
+      when: hostname_result.reboot_required | default(false)
+
+    - name: Instalar paquetes básicos mediante Chocolatey (si está disponible)
+      ansible.windows.win_chocolatey:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ win_packages }}"
+      ignore_errors: true
+
