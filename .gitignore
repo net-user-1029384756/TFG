@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Datos sensibles y temporales
+backups/
+inventory/devices.csv
+resultado.txt
+
+# Documentación de Word/PDF temporal
+*.pdf
+*.docx

@@ -1,0 +1,10 @@
+---
+- name: Verificar la instalación y conectividad de Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Imprimir mensaje de bienvenida
+      debug:
+        msg: "Hola, Ansible. La instalación funciona correctamente."

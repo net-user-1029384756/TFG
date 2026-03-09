@@ -1,0 +1,96 @@
+================================================================================
+PROYECTO DE FIN DE GRADO - ASIR
+AUTOMATIZACIÓN DE RACKS DE RED Y EQUIPOS CLIENTE MEDIANTE PYTHON Y ANSIBLE
+================================================================================
+
+1. PORTADA
+--------------------------------------------------------------------------------
+Título: Automatización de la configuración de racks de red y equipos cliente 
+       mediante Python y Ansible[cite: 3, 4, 305].
+Alumno: Martín Gardachal Rodríguez[cite: 6, 299].
+Ciclo: Grado Superior en Administración de Sistemas Informáticos en Red[cite: 2, 228].
+Curso: 2025/26[cite: 2, 228].
+Centro: Mariana Sanz[cite: 1, 227].
+Tutora: Laura Sesma[cite: 7, 233].
+Fecha: 24/11/2025[cite: 8, 234].
+
+2. ÍNDICE
+--------------------------------------------------------------------------------
+1. Introducción
+2. Contextualización
+3. Objetivos del Proyecto
+4. Requisitos Previos (Hardware y Software)
+5. Enumeración y Desarrollo de las Etapas
+6. Avance Técnico: Prototipo Funcional
+7. Conclusiones
+8. Bibliografía y Referencias
+
+3. INTRODUCCIÓN
+--------------------------------------------------------------------------------
+La administración de infraestructuras de red es crítica en organizaciones modernas que enfrentan entornos multi-fabricante y necesidades de escalabilidad[cite: 15, 16]. La automatización reduce errores humanos y garantiza la homogeneidad de la infraestructura[cite: 17, 244]. 
+
+Este proyecto desarrolla una solución modular para gestionar routers y switches (Cisco, TP-Link, Mikrotik) y preparar equipos cliente (Windows/Linux) mediante Python (POO) y Ansible[cite: 18, 19, 20]. Se validará en entornos reales o simuladores profesionales como GNS3 o EVE-NG[cite: 24, 251].
+
+4. CONTEXTUALIZACIÓN
+--------------------------------------------------------------------------------
+- Ámbito Social: Responde a la necesidad de redes estables para teletrabajo y servicios digitales[cite: 257, 258].
+- Ámbito Económico: Ahorro en horas de configuración y uso de herramientas de código abierto como Ansible[cite: 260, 262].
+- Ámbito Tecnológico: Uso de protocolos OSPF, CDP/LLDP y librerías Python como Netmiko y NAPALM[cite: 264].
+- Ámbito Legal: Cumplimiento de RGPD mediante conexiones seguras (SSH, WinRM)[cite: 267, 268].
+- Ámbito Ambiental: Reducción de desplazamientos físicos y consumo energético mediante virtualización[cite: 270, 271].
+
+5. OBJETIVOS DEL PROYECTO
+--------------------------------------------------------------------------------
+Objetivo General:
+Desarrollar una solución integral de automatización para configurar racks de red y equipos cliente con Python y Ansible, garantizando eficiencia y seguridad[cite: 29, 279].
+
+Objetivos Específicos:
+- Diseñar un sistema modular en Python basado en POO[cite: 31, 282].
+- Automatizar VLANs, OSPF y seguridad de puertos en dispositivos multi-marca[cite: 32, 283].
+- Implementar servicios críticos (DHCP/DNS) mediante Ansible[cite: 33, 284].
+- Detectar automáticamente el SO de los equipos clientes y aplicar configuraciones personalizadas[cite: 34, 285].
+- Crear una interfaz gráfica (Tkinter/PyQt) para la gestión del sistema[cite: 39, 290].
+
+6. REQUISITOS PREVIOS
+--------------------------------------------------------------------------------
+Recursos Hardware:
+- CPU: Mínimo 4 núcleos / 8 hilos con soporte de virtualización (Intel VT-x/AMD-V)[cite: 48, 49].
+- RAM: Mínimo 16 GB DDR4/DDR5 para soportar simultáneamente routers Mikrotik y clientes Windows[cite: 50, 51].
+- Almacenamiento: SSD NVMe para soportar altas tasas de IOPS en la simulación[cite: 52, 53].
+
+Recursos Software:
+- Hipervisor: Oracle VirtualBox y GNS3[cite: 59].
+- OS Host: Windows 11 Pro[cite: 60].
+- Dispositivos de Red: MikroTik RouterOS (CHR 7.21) y Cisco IOSv[cite: 61, 62].
+- Desarrollo: Python 3.14.0 y Ansible Core operando desde WSL o nodo Linux[cite: 64, 66].
+
+7. ENUMERACIÓN Y DESARROLLO DE LAS ETAPAS (CRONOGRAMA)
+--------------------------------------------------------------------------------
+- Fase 1: Análisis, Propuesta y Diseño (Nov 2025) - COMPLETADA[cite: 86].
+- Fase 2: Investigación y Entorno (Dic 2025) - COMPLETADA[cite: 89].
+- Fase 3: Desarrollo Inicial Python Core (Ene 2026) - COMPLETADA[cite: 94].
+- Fase 4: Desarrollo de Scripts Avanzados (Feb - Mar 2026) - EN PROGRESO[cite: 101].
+- Fase 5: Ansible y Clientes (Mar - Abr 2026)[cite: 106].
+- Fase 6: Pruebas Finales y Validación (Abr - May 2026)[cite: 108].
+- Fase 7: Memoria Final y Defensa (Límite 22/Mayo/2026)[cite: 80, 109].
+
+8. AVANCE TÉCNICO: PROTOTIPO FUNCIONAL
+--------------------------------------------------------------------------------
+Resultados obtenidos:
+- Virtualización: Topología WAN operativa con nodos R-SUCURSAL-01 y R-CORE-01[cite: 115, 116, 118].
+- Controlador Python: Implementada clase abstracta NetworkDevice y gestión de SSH vía Netmiko[cite: 98, 99, 120].
+- Validación: Conectividad exitosa confirmada mediante scripts de inventario[cite: 122, 134].
+- Enrutamiento: Configuración funcional de OSPFv2 con rutas dinámicas activas (flag DAO) en las tablas de ruteo[cite: 135, 137].
+
+9. CONCLUSIONES
+--------------------------------------------------------------------------------
+El proyecto ha superado las barreras técnicas de virtualización y programación base[cite: 151]. Se ha validado la eficacia de la metodología "Infraestructura como Código" logrando la convergencia de rutas sin intervención manual[cite: 154]. El desarrollo avanza con adelanto respecto al cronograma previsto[cite: 156].
+
+10. BIBLIOGRAFÍA Y REFERENCIAS
+--------------------------------------------------------------------------------
+- GNS3 Technologies (2024). GNS3 Documentation[cite: 160].
+- MikroTik (2025). RouterOS v7: OSPF and Routing[cite: 164].
+- Byers, K. (2024). Netmiko library. GitHub[cite: 170].
+- Chou, E. (2020). Mastering Python Networking. Packt Publishing[cite: 174].
+- Edgeworth, B. (2020). Network Programmability and Automation. O'Reilly[cite: 176].
+================================================================================
