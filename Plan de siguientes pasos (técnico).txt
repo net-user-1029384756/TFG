@@ -1,0 +1,107 @@
+Plan de siguientes pasos (técnico)
+
+1. Consolidar el “core” Python y el inventario:
+
+- Unificar el modelo de inventario:
+	- Revisar y documentar el formato de inventory/devices.csv (columnas, ejemplo de filas) para que quede claro qué campos exige create_device (ip, username, password, device_type, hostname, etc.).
+	- Asegurarse de que todos los scripts (backup_network, deploy_lan, deploy_ospf, discover_network, etc.) consumen los dispositivos siempre vía get_devices + create_device, sin duplicar lógica.
+
+- Manejo de errores y logs:
+	- Estandarizar mensajes de salida: prefijos [+], [*], [!], etc. ya los usas; conviene aplicarlos de forma homogénea en scripts/*.py para que el usuario vea claramente qué parte ha fallado.
+	- introducir un pequeño logger (aunque sea con logging.basicConfig) para poder guardar salidas de pruebas en un fichero de log que luego puedas adjuntar a la memoria.
+
+2. Completar y alinear los scripts de red (scripts/)
+
+- backup_network.py:
+	- Confirmar que usa get_devices + create_device para iterar sobre todos los routers/switches y ejecuta send_command o send_config según corresponda.
+	- Decidir formato y ubicación de backups (ej. backups/<hostname>-<fecha>.cfg), y dejarlo fijo en el proyecto.
+
+- deploy_lan.py:
+	- Seguir el patrón de deploy_ospf.py: generar una función get_lan_config(hostname) que devuelva una lista de comandos de VLANs, direccionamiento LAN, seguridad de puertos, etc., diferenciando SUCURSAL / CORE u otros roles.
+	- Aplicar la config con send_config y, si es posible, validar con un par de comandos de verificación (/interface/print, ip address print, etc.).
+
+- discover_network.py:
+	- Integrar NetworkScanner para escanear un rango configurable (pregunta al usuario en el CLI o léelo de un .env / config).
+	- Opcionalmente, exportar el resultado a CSV o JSON que luego se pueda usar para generar parte del inventario.
+
+- deploy_dhcp.py:
+	- Definir claramente qué parte se hace con Python (p. ej. preparar variables) y qué parte se delega a Ansible (llamada a run_playbook.py con un playbook concreto).
+	- Dejar el flujo documentado en comentarios de alto nivel para poder explicarlo en la memoria.
+
+3. Capa Ansible: consolidar inventario y playbooks
+- Inventario Ansible (inventory/ansible_hosts):
+	- Alinear la estructura de grupos con la tipología de clientes/servidores de tu proyecto (clientes Windows, clientes Linux, servidores de servicios, etc.).
+	- Añadir comentarios claros en el fichero para explicar qué representa cada grupo de hosts (esto lo puedes usar luego casi directamente en el TFG).
+
+- Playbooks clave:
+	- Revisar y terminar al menos:
+		- deploy_dhcp.yml + plantilla dhcpd.conf.j2.
+		- Un playbook de LAN/OS básico para clientes Linux.
+		- Un playbook para la preparación inicial de clientes Windows (instalación de paquetes, configuración de red, etc.), aunque sea simplificado.
+	- Asegurarte de que run_playbook.py ejecuta estos playbooks con parámetros claros (ruta a inventario, etiquetas, etc.).
+
+- Caso de uso demostrable:
+	- Definir 1–2 “escenarios de demo” reproducibles:
+	- Escenario 1: “Levantar core de red + OSPF + DHCP” sobre GNS3/EVE-NG.
+	- Escenario 2: “Configurar lote de equipos cliente (Linux/Windows)” con Ansible y validación (ping, comprobación de servicios).
+
+4. Automatización de equipos cliente (detección y acciones)
+
+- Detección de SO y clasificación:
+	- Reutilizar NetworkScanner para descubrir hosts y, opcionalmente, la detección de SO.
+	- Diseñar un pequeño flujo que:
+		- Escanee un rango.
+		- Clasifique hosts como “probable Windows / probable Linux” (por Nmap, por puertos abiertos, o por una lista de IPs que tú definas).
+		- Genere o actualice:
+			- El CSV de inventario para ClientDevice.
+			- El inventario Ansible asignando el host al grupo correcto.
+
+- Uso de LinuxClient y WindowsClient:
+	- Añadir uno o dos “casos de uso” simples pero claros:
+		- Linux: ejecutar un script de configuración (ej. instalar paquetes, tocar networkd o NetworkManager).
+		- Windows: habilitar WinRM, aplicar un cambio sencillo (ej. cambiar nombre del equipo o configurar IP).
+
+	- Que estos casos estén cableados desde el menú de [src/main.py](src/main.py) como nuevas opciones (por ejemplo, “6. Configurar clientes Linux”, “7. Configurar clientes Windows”) o bien como submenús.
+
+5. Interfaz gráfica (Tkinter/PyQt)
+
+Aunque el CLI funciona bien para la práctica técnica, la GUI te va a dar muchos puntos en la defensa si la planteas como un “frontend ligero” sobre el core:
+
+- Diseño de flujo de GUI:
+	- Definir pantallas mínimas:
+		- Ventana principal con botones equivalentes al menú CLI (backup, deploy LAN, deploy OSPF, descubrir red, deploy DHCP, clientes).
+		- Una vista resumen de dispositivos (leer el inventario y mostrar una tabla).
+		- Una ventana de “log” para mostrar la salida de las operaciones (scrollable).
+
+- Integración con el core:
+	- Guiar la GUI para que llame a las mismas funciones que el CLI (run_backup, run_deploy_lan, etc.), evitando duplicar lógica.
+	- Decidir si main.py lanza CLI o GUI según parámetro (por ejemplo python -m src.main gui) o tener un gui.py como entrada específica.
+
+6. Pruebas, validación en laboratorio y datos para la memoria
+
+- Tests unitarios:
+	- Completar tests/test_devices.py y tests/test_factory.py para validar:
+		- Que create_device devuelve la clase adecuada según device_type.
+		- Que el parseo de inventario funciona (mock de CSV).
+		- Que get_ospf_config genera la lista de comandos esperados para SUCURSAL y CORE.
+
+- Validación en GNS3/EVE-NG / hardware:
+	- Preparar al menos:
+		- 1 captura de pantalla de la topología.
+		- 1–2 capturas mostrando la tabla de rutas con OSPF convergido.
+		- Logs de ejecución de tus scripts (salida de consola o ficheros de log).
+
+ -Estos materiales luego los integras en el documento del TFG (avance técnico, anexos, etc.).
+
+7. Documentación y memoria del TFG
+
+- README y manual de uso:
+	- Ampliar [README.md](README.md) con:
+		- Requisitos (Python, Nmap, Ansible, Netmiko, NAPALM, etc.).
+		- Pasos de instalación (pip install -r requirements.txt, etc.).
+		- Ejemplos de ejecución (CLI y, si procede, GUI).
+
+- Documento PROY y memoria final:
+	- Usar lo que ya tienes en PROY_1_0_GARDACHAL_MARTÍN.txt como índice guía y:
+	- Completar la sección de “Avance técnico” con capturas, descripciones de flujos y fragmentos clave de código (como el factory, el scanner y un playbook).
+	- Describir claramente 1–2 escenarios end-to-end (de pulsar un botón a ver la red configurada).

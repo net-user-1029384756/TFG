@@ -1,0 +1,21 @@
+name: linux-client-01
+role: linux_client
+os_type: linux
+vbox_ostype: Debian_64
+
+resources:
+  cpus: 1
+  memory_mb: 1024
+  disk_gb: 10
+
+storage:
+  base_folder: "M:/Clientes/Linux"
+
+network:
+  adapter1:
+    type: hostonly
+    name: "vboxnet0"
+
+ip: 192.168.56.101
+ansible_group: linux_clients
+

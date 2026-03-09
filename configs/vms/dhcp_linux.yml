@@ -1,0 +1,21 @@
+name: dhcp_linux_01
+role: dhcp_server
+os_type: linux
+vbox_ostype: ubuntu_server_64
+
+resources:
+  cpus: 1
+  memory_mb: 1024
+  disk_gb: 10
+
+storage:
+  base_folder: "M:/Servidores"
+
+network:
+  adapter1:
+    type: hostonly
+    name: "vboxnet0"
+
+ip: 192.168.56.20
+ansible_group: dhcp_servers
+

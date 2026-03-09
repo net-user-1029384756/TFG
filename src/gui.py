@@ -1,7 +1,6 @@
 import sys
 import os
 import csv
-import subprocess
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout,
     QHBoxLayout, QListWidget, QPushButton, QTextEdit, QLabel, QMessageBox,
@@ -11,12 +10,10 @@ from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 
 # Ajuste de ruta para poder importar los módulos del proyecto
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(PROJECT_ROOT)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.modules.device_manager_factory import create_device
 
-
-# --- Clase Worker para conexiones SSH ---
+# --- Clase Worker para Hilos ---
 class ConnectionWorker(QThread):
     """Hilo que gestiona la conexión SSH en segundo plano."""
     log_signal = pyqtSignal(str)      # Señal para enviar texto al log
@@ -86,42 +83,6 @@ class ConnectionWorker(QThread):
             if router:
                 router.disconnect()
                 self.log_signal.emit(f"[-] Desconectado de {router.hostname}")
-            self.finished_signal.emit()
-
-
-class AnsiblePlaybookWorker(QThread):
-    """
-    Hilo que ejecuta un comando de sistema (por ejemplo, un script de Ansible)
-    y envía la salida estándar al log de la interfaz.
-    """
-
-    log_signal = pyqtSignal(str)
-    finished_signal = pyqtSignal()
-
-    def __init__(self, command, cwd):
-        super().__init__()
-        self.command = command
-        self.cwd = cwd
-
-    def run(self):
-        try:
-            self.log_signal.emit(f"[INFO] Ejecutando: {' '.join(self.command)}")
-            process = subprocess.Popen(
-                self.command,
-                cwd=self.cwd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-            )
-
-            for line in process.stdout:
-                self.log_signal.emit(line.rstrip())
-
-            process.wait()
-            self.log_signal.emit(f"[INFO] Proceso finalizado con código {process.returncode}.")
-        except Exception as e:
-            self.log_signal.emit(f"[ERROR] Fallo ejecutando el comando: {e}")
-        finally:
             self.finished_signal.emit()
 
 class MainWindow(QMainWindow):
@@ -212,7 +173,6 @@ class MainWindow(QMainWindow):
         self.exit_action.triggered.connect(self.close)
         self.gather_facts_action.triggered.connect(self.run_gather_facts)
         self.backup_action.triggered.connect(self.run_backup_placeholder)
-        self.deploy_dhcp_action.triggered.connect(self.run_deploy_dhcp_playbook)
         self.about_action.triggered.connect(self.show_about_dialog)
 
     def _load_initial_data(self):
@@ -278,8 +238,6 @@ class MainWindow(QMainWindow):
         actions_menu.addAction(self.gather_facts_action)
         self.backup_action = QAction("Realizar Backup", self)
         actions_menu.addAction(self.backup_action)
-        self.deploy_dhcp_action = QAction("Desplegar DHCP (Ansible)", self)
-        actions_menu.addAction(self.deploy_dhcp_action)
 
         # --- Menú Ayuda ---
         help_menu = menu_bar.addMenu("A&yuda")
@@ -288,33 +246,6 @@ class MainWindow(QMainWindow):
 
     def run_backup_placeholder(self):
         self.log_text_edit.append("\n[INFO] La función para realizar backups se conectará aquí.")
-
-    def run_deploy_dhcp_playbook(self):
-        """
-        Lanza el script Python que ejecuta el playbook de Ansible para desplegar DHCP.
-        """
-        script_path = os.path.join(PROJECT_ROOT, "scripts", "deploy_dhcp.py")
-        if not os.path.exists(script_path):
-            self.log_text_edit.append(f"[ERROR] No se encuentra el script: {script_path}")
-            return
-
-        self.log_text_edit.append("\n=== DESPLIEGUE DHCP DESDE LA GUI ===")
-
-        # Deshabilitar la acción para evitar lanzarlo varias veces a la vez
-        self.deploy_dhcp_action.setEnabled(False)
-
-        self.ansible_worker = AnsiblePlaybookWorker(
-            command=[sys.executable, script_path],
-            cwd=PROJECT_ROOT,
-        )
-        self.ansible_worker.log_signal.connect(self.update_log)
-
-        def on_finished():
-            self.deploy_dhcp_action.setEnabled(True)
-            self.log_text_edit.append("[INFO] Despliegue DHCP terminado.\n")
-
-        self.ansible_worker.finished_signal.connect(on_finished)
-        self.ansible_worker.start()
 
     def show_about_dialog(self):
         QMessageBox.about(self, "Acerca de",

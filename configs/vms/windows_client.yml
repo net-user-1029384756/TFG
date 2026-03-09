@@ -1,0 +1,21 @@
+name: windows-client-01
+role: windows_client
+os_type: windows
+vbox_ostype: Windows11_64
+
+resources:
+  cpus: 2
+  memory_mb: 2048
+  disk_gb: 30
+
+storage:
+  base_folder: "M:/Clientes/Windows"
+
+network:
+  adapter1:
+    type: hostonly
+    name: "vboxnet0"
+
+ip: 192.168.56.111
+ansible_group: windows_clients
+
