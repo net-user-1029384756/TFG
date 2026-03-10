@@ -1,11 +1,31 @@
 import os
 import subprocess
+import platform
 from typing import Dict, Any
 
 import yaml
 
 
-VBOXMANAGE_CMD = "VBoxManage"
+def get_vboxmanage_cmd():
+    """
+    Detecta el entorno operativo y devuelve el comando correcto para VirtualBox.
+    Es vital para que WSL pueda controlar el VirtualBox instalado en Windows.
+    """
+    uname_release = platform.uname().release.lower()
+    
+    # Detectamos si estamos dentro del subsistema de Windows (WSL)
+    if "microsoft" in uname_release or "wsl" in uname_release:
+        # Ruta absoluta estándar de VirtualBox en Windows mapeada en WSL
+        vbox_path = "/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe"
+        if os.path.exists(vbox_path):
+            return vbox_path
+        # Fallback por si el usuario lo tiene en su PATH de Windows
+        return "VBoxManage.exe"
+    
+    # Si es Linux nativo o Windows CMD nativo
+    return "VBoxManage"
+
+VBOXMANAGE_CMD = get_vboxmanage_cmd()
 
 
 def load_vm_config(path: str) -> Dict[str, Any]:

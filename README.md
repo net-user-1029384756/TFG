@@ -13,6 +13,7 @@
 - [cite_start]**Despliegue de Servicios:** Playbooks de Ansible para la configuración simultánea de servicios críticos y sistemas operativos[cite: 73, 110].
 - [cite_start]**Detección Automática:** Scripts para la identificación de sistemas operativos y aplicación de configuraciones personalizadas[cite: 108, 132].
 - [cite_start]**Interfaz Gráfica:** Panel de gestión desarrollado en Tkinter/PyQt[cite: 75, 113].
+- **Gestor de VMs con VirtualBox + Ansible:** Desde la GUI se pueden definir perfiles de máquina virtual (rol, SO, recursos, red) que se guardan como YAML en `configs/vms/`, se crean automáticamente en VirtualBox mediante `VBoxManage` y se provisionan con Ansible (`deploy_dhcp.yml`, `setup_linux_client.yml`, `setup_windows_client.yml`) usando el inventario `inventory/ansible_hosts`.
 
 ## 📁 Estructura del Repositorio
 - [cite_start]`scripts/`: Scripts de Python para tareas específicas (backups, despliegue de OSPF, etc.)[cite: 156].

@@ -9,8 +9,16 @@ from scripts.run_playbook import run_ansible_playbook
 
 def run_deploy_dhcp():
     """
-    Lanza el playbook de Ansible que despliega un servidor DHCP
-    en los hosts definidos en 'inventory/ansible_hosts' (grupo [dhcp_servers]).
+    Orquestador ligero en Python para el despliegue de DHCP.
+
+    - Python se encarga de:
+      - Resolver rutas del proyecto (playbook + inventario).
+      - Mostrar por pantalla qué se va a ejecutar.
+      - Invocar a Ansible mediante run_ansible_playbook.
+
+    - Ansible se encarga de:
+      - Instalar y configurar el servicio DHCP en los hosts del grupo [dhcp_servers]
+        definidos en 'inventory/ansible_hosts' usando 'playbooks/deploy_dhcp.yml'.
     """
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     playbook_path = os.path.join(project_root, 'playbooks', 'deploy_dhcp.yml')

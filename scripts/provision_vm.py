@@ -1,5 +1,8 @@
 import argparse
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from scripts.run_playbook import run_ansible_playbook
 from src.modules.vbox_manager import load_vm_config, create_vm, start_vm

@@ -1,6 +1,3 @@
-"""
-Punto de entrada principal para el proyecto de automatización de red.
-"""
 import sys
 import os
 
@@ -12,7 +9,9 @@ from scripts.deploy_lan import run_deploy_lan
 from scripts.deploy_ospf import run_deploy_ospf
 from scripts.discover_network import run_discovery
 from scripts.deploy_dhcp import run_deploy_dhcp
+from scripts.run_playbook import run_ansible_playbook
 
+from src.modules.logger import log
 
 def show_menu():
     """Muestra el menú de opciones al usuario."""
@@ -24,6 +23,8 @@ def show_menu():
     print("3. Desplegar configuración OSPF")
     print("4. Descubrir dispositivos en la red")
     print("5. Desplegar servidor DHCP mediante Ansible")
+    print("6. Configurar clientes Linux (Ansible)")   
+    print("7. Configurar clientes Windows (Ansible)") 
     print("0. Salir")
     print("=" * 60)
 
@@ -44,6 +45,12 @@ def main():
             run_discovery()
         elif choice == '5':
             run_deploy_dhcp()
+        elif choice == '6':
+            log.info("\n[*] Desplegando configuración base en clientes Linux...")
+            run_ansible_playbook(os.path.join('playbooks', 'setup_linux_client.yml'), inventory_source=os.path.join('inventory', 'ansible_hosts'))
+        elif choice == '7':
+            log.info("\n[*] Desplegando configuración base en clientes Windows...")
+            run_ansible_playbook(os.path.join('playbooks', 'setup_windows_client.yml'), inventory_source=os.path.join('inventory', 'ansible_hosts'))
         elif choice == '0':
             print("\n[i] Saliendo del programa. ¡Hasta pronto!")
             sys.exit()
